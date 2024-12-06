@@ -13,6 +13,11 @@ api = token    # получить токен бота
 bot = Bot(api)      # объект класса Bot()
 dp = Dispatcher(bot, storage=MemoryStorage())   # диспетчер управления ботом
 
+@dp.message_handler(commands=['start'])     # декоратор для обработки команды /start
+async def start(message):
+    """Асинхронный метод выполнения команды 'start'"""
+    await message.answer(f'Здравствуйте! Рады Вас видеть в нашем боте!')
+
 class UserState(StatesGroup):
     """Дочерний класс, унаследованный от StatesGroup"""
     age  = State()      # возраст
@@ -23,7 +28,8 @@ class UserState(StatesGroup):
 async def set_age(message):
     """Эта функция выводит в Telegram-бот сообщение 'Введите свой возраст:'.
     и после этого ожидает ввода возраста в атрибут UserState.age при помощи метода set."""
-    await message.answer('Введите свой возраст, лет:')
+    msg = f'Сейчас я помогу Вам рассчитать суточную норму потребления калорий.\nВведите свой возраст, лет:'
+    await message.answer(msg)
     await UserState.age.set()    # вызываем функцию установки возраста
 
 @dp.message_handler(state=UserState.age)    # декоратор, указывает, что функция будет реагировать на state=UserState.age
@@ -67,6 +73,11 @@ async def send_calories(message, state):
 # для мужчин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5;
 # для женщин: 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161.
 
+@dp.message_handler()                       # декоратор для обработки любых текстовых сообщений
+async def all_messages(message):
+    """Асинхронный метод отправки эхо-сообщений"""
+    msg = message.text[::-1]
+    await message.answer(msg)
 
 
 if __name__ == '__main__':
