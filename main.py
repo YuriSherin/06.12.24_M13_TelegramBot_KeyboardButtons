@@ -1,4 +1,3 @@
-import info
 from info import token
 
 from aiogram import Bot, Dispatcher, executor, types
@@ -6,11 +5,18 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
 
 
-api = info.token    # получить токен бота
+api = token    # получить токен бота
 bot = Bot(api)      # объект класса Bot()
 dp = Dispatcher(bot, storage=MemoryStorage())   # диспетчер управления ботом
 
+@dp.message_handler(commands=['start'])     # декоратор для обработки команды /start
+async def start(message):
+    print(f'Привет! Я бот помогающий твоему здоровью.')
 
+
+@dp.message_handler()                       # декоратор для обработки любых текстовых сообщений
+async def all_messages(message):
+    print(f'Введите команду /start, чтобы начать общение.')
 
 
 
